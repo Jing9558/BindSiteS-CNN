@@ -1,18 +1,13 @@
-import csv
 import glob
 import os
-import re
 import numpy as np
-import torch
 import torch.utils.data
-import trimesh
 import logging
 import healpy as hp
-from orbit.structure import MolecularSurface
-from orbit.datasets import ToughM1, ProSPECCTs
-import orbit.utils.geometry
+from orbit_demo.structure import MolecularSurface
+from orbit_demo.datasets import ToughM1, ProSPECCTs
+import orbit_demo.utils.geometry
 import random
-import pandas as pd
 
 logging.getLogger('pyembree').disabled = True
 
@@ -73,15 +68,6 @@ def render_model(mesh, sgrid):
     dist = np.linalg.norm(grid_hits - loc, axis=-1)
     dist = np.nan_to_num(dist)
 
-    # Compute the distance from origin to the intersection points
-    dist_origin = np.linalg.norm(grid_hits, axis=-1)
-    dist_origin *= (r / 0.99)
-    dist_origin -= 7.46
-    dist_origin /= 2.93
-    dist_origin = np.nan_to_num(dist_origin)
-    dist_origin_im = np.ones(sgrid.shape[0])
-    dist_origin_im[index_ray] = dist_origin
-
     # For each intersection, look up the normal of the triangle that was hit
     normals = mesh.trimesh.face_normals[index_tri]
     normalized_normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
@@ -135,21 +121,6 @@ def render_model(mesh, sgrid):
     ARO_map_im = np.zeros(sgrid.shape[0])
     ARO_map_im[index_ray] = ARO_map
 
-    # gaussian_curvature
-    gaussian_curvature = mesh.vertex_properties['gaussian_curvature'][faces].mean(axis=1)
-    gaussian_curvature_im = np.zeros(sgrid.shape[0])
-    gaussian_curvature_im[index_ray] = gaussian_curvature
-
-    # shape_index
-    shape_index = mesh.vertex_properties['shape_index'][faces].mean(axis=1)
-    shape_index_im = np.zeros(sgrid.shape[0])
-    shape_index_im[index_ray] = shape_index
-
-    # mean_curvature
-    mean_curvature = mesh.vertex_properties['mean_curvature'][faces].mean(axis=1)
-    mean_curvature_im = np.zeros(sgrid.shape[0])
-    mean_curvature_im[index_ray] = mean_curvature
-
     # get charges value at each vertex in face
     charges = mesh.vertex_properties['potential'][faces].mean(axis=1)
     charges_ = np.copy(charges)
@@ -181,7 +152,7 @@ class ToMesh:
 
         if self.tr > 0:
             tr = np.random.rand() * self.tr
-            rot = orbit.utils.geometry.random_rotmat_zyz()
+            rot = orbit_demo.utils.geometry.random_rotmat_zyz()
             mesh.apply_transformation(rot)
             mesh.apply_translation([tr, 0, 0])
 
@@ -189,7 +160,7 @@ class ToMesh:
                 mesh.apply_transformation(rot.T)
 
         if self.rot:
-            mesh.apply_transformation(orbit.utils.geometry.random_rotmat_zyz())
+            mesh.apply_transformation(orbit_demo.utils.geometry.random_rotmat_zyz())
 
         return mesh
 

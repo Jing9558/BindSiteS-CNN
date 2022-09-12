@@ -4,17 +4,13 @@ import torchvision
 from sklearn.metrics import confusion_matrix
 
 import os
-import shutil
-import time
 import logging
 import copy
 import types
 import importlib.machinery
 import numpy as np
-from torch.optim.lr_scheduler import StepLR
 
 from dataset import TOUGHC1_steroid, CacheNPY, ToMesh, ProjectOnSphere
-
 
 def main(log_dir, model_path, augmentation, batch_size, num_workers):
     arguments = copy.deepcopy(locals())

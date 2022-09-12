@@ -1,16 +1,12 @@
-import csv
 import glob
 import os
-import re
 import numpy as np
-import torch
 import torch.utils.data
-import trimesh
 import logging
 import healpy as hp
-from orbit.structure import MolecularSurface
-from orbit.datasets import ToughC1
-import orbit.utils.geometry
+from orbit_demo.structure import MolecularSurface
+from orbit_demo.datasets import ToughC1
+import orbit_demo.utils.geometry
 
 logging.getLogger('pyembree').disabled = True
 
@@ -70,14 +66,6 @@ def render_model(mesh, sgrid):
     # Compute the distance from the grid points to the intersection pionts
     dist = np.linalg.norm(grid_hits - loc, axis=-1)
 
-    # Compute the distance from origin to the intersection points
-    dist_origin = np.linalg.norm(grid_hits, axis=-1)
-    dist_origin *= (r / 0.99)
-    dist_origin -= 7.46
-    dist_origin /= 2.93
-    dist_origin_im = np.ones(sgrid.shape[0])
-    dist_origin_im[index_ray] = dist_origin
-
     # For each intersection, look up the normal of the triangle that was hit
     normals = mesh.trimesh.face_normals[index_tri]
     normalized_normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
@@ -98,14 +86,11 @@ def render_model(mesh, sgrid):
     nx, ny, nz = normalized_normals[:, 0], normalized_normals[:, 1], normalized_normals[:, 2]
     gx, gy, gz = grid_hits_normalized[:, 0], grid_hits_normalized[:, 1], grid_hits_normalized[:, 2]
     wedge_norm = np.sqrt((nx * gy - ny * gx) ** 2 + (nx * gz - nz * gx) ** 2 + (ny * gz - nz * gy) ** 2)
+    wedge_norm = np.nan_to_num(wedge_norm)
     n_wedge_ray_im = np.zeros(sgrid.shape[0])
     n_wedge_ray_im[index_ray] = wedge_norm
 
-    # get potential value at each vertex in face
     faces = mesh.faces[index_tri]
-    hbond_potential = mesh.vertex_properties['hbond_potential'][faces].mean(axis=1)
-    hbond_potential_im = np.zeros(sgrid.shape[0])
-    hbond_potential_im[index_ray] = hbond_potential
 
     # get atomic_hydrophobicity
     atomic_hydrophobicity = mesh.vertex_properties['atomic_hydrophobicity_4.5'][faces].mean(axis=1)
@@ -132,27 +117,6 @@ def render_model(mesh, sgrid):
     ARO_map = mesh.vertex_properties['ARO_map'][faces].mean(axis=1)
     ARO_map_im = np.zeros(sgrid.shape[0])
     ARO_map_im[index_ray] = ARO_map
-
-    # gaussian_curvature
-    gaussian_curvature = mesh.vertex_properties['gaussian_curvature'][faces].mean(axis=1)
-    gaussian_curvature_im = np.zeros(sgrid.shape[0])
-    gaussian_curvature_im[index_ray] = gaussian_curvature
-
-    # shape_index
-    shape_index = mesh.vertex_properties['shape_index'][faces].mean(axis=1)
-    shape_index_im = np.zeros(sgrid.shape[0])
-    shape_index_im[index_ray] = shape_index
-
-    # mean_curvature
-    mean_curvature = mesh.vertex_properties['mean_curvature'][faces].mean(axis=1)
-    mean_curvature_im = np.zeros(sgrid.shape[0])
-    mean_curvature_im[index_ray] = mean_curvature
-
-    # local_atomic_density
-    local_atomic_density = mesh.vertex_properties['local_atomic_density_4.5'][faces].mean(axis=1)
-    local_atomic_density /= 53
-    local_atomic_density_im = np.zeros(sgrid.shape[0])
-    local_atomic_density_im[index_ray] = local_atomic_density
 
     # get charges value at each vertex in face
     charges = mesh.vertex_properties['potential'][faces].mean(axis=1)
@@ -184,7 +148,7 @@ class ToMesh:
 
         if self.tr > 0:
             tr = np.random.rand() * self.tr
-            rot = orbit.utils.geometry.random_rotmat_zyz()
+            rot = orbit_demo.utils.geometry.random_rotmat_zyz()
             mesh.apply_transformation(rot)
             mesh.apply_translation([tr, 0, 0])
 
@@ -192,7 +156,7 @@ class ToMesh:
                 mesh.apply_transformation(rot.T)
 
         if self.rot:
-            mesh.apply_transformation(orbit.utils.geometry.random_rotmat_zyz())
+            mesh.apply_transformation(orbit_demo.utils.geometry.random_rotmat_zyz())
 
         return mesh
 

@@ -2,7 +2,6 @@ import torch
 import torch.nn.functional as F
 import torchvision
 from torch.utils.tensorboard import SummaryWriter
-from sklearn.metrics import confusion_matrix
 
 import os
 import shutil
