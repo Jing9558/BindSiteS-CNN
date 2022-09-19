@@ -28,4 +28,4 @@ Create a new folder ```data``` under ```TOUGHM1``` and copy the surface folder c
 
 Within TOUGHM1: ```python train.py log_dir my_run_0 model_path model.py augmentation 5 batch_size 128 learning_rate 0.0005 num_workers 8 test_every_n 1 loss_margin 1.25 fold_n 0```
 
-Valid with prospeccts:  ```python test.py log_dir my_run model_path model.py augmentation 5 batch_size 1 num_workers 8```
+Valid with prospeccts:  ```python val_ProSPECCTs.py log_dir my_run_0 model_path model.py augmentation 5 batch_size 128 num_workers 8 db_name P1```
