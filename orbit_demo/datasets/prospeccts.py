@@ -95,6 +95,39 @@ class ProSPECCTs(BindingSiteDataset):
     def get_negative_pairs(self):
         return [x[:2] for x in self.get_pairs() if x[2] == 'inactive']
 
+    def _get_db_path(self):
+        if self.db_name == 'P1':
+            dir1 = 'identical_structures'
+            dir2, listfn = dir1, dir1 + '.csv'
+        elif self.db_name == 'P1.2':
+            dir1 = 'identical_structures_similar_ligands'
+            dir2, listfn = dir1, dir1 + '.csv'
+        elif self.db_name == 'P2':
+            dir1 = 'NMR_structures'
+            dir2, listfn = dir1, dir1 + '.csv'
+        elif self.db_name == 'P3':
+            dir1, dir2, listfn = 'decoy', 'decoy_structures', 'decoy_structures5.csv'
+        elif self.db_name == 'P4':
+            dir1, dir2, listfn = 'decoy', 'decoy_shape_structures', 'decoy_structures5.csv'
+        elif self.db_name == 'P5':
+            dir1 = 'kahraman_structures'
+            dir2, listfn = dir1, dir1 + '80.csv'
+        elif self.db_name == 'P5.2':
+            dir1 = 'kahraman_structures'
+            dir2, listfn = dir1, dir1 + '.csv'
+        elif self.db_name == 'P6':
+            dir1 = 'barelier_structures'
+            dir2, listfn = dir1, dir1 + '.csv'
+        elif self.db_name == 'P6.2':
+            dir1 = 'barelier_structures'
+            dir2, listfn = dir1 + '_cofactors', dir1 + '.csv'
+        elif self.db_name == 'P7':
+            dir1 = 'review_structures'
+            dir2, listfn = dir1, dir1 + '.csv'
+        else:
+            raise NotImplementedError('prospeccts database not available')
+        return dir1, dir2, listfn
+
     def __repr__(self):
         return '{}(dataset: {}, entries: {})'.format(
             self.__class__.__name__,
