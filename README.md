@@ -17,3 +17,7 @@ Folders of surfaces should be placed in the sub-folder of the corresponding data
 
 ## Training Demo
 ### TOUGH-C1 Classification task
+Create a new folder ```data``` under ```TOUGH-C1``` and copy the surface folder corresponding to TOUGH-C1 into it.
+
+Within TOUGH-C1: ```python train.py log_dir my_run model_path model.py augmentation 5 batch_size 32 learning_rate 0.05 num_workers 8```
+
