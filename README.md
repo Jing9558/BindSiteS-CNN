@@ -27,5 +27,7 @@ Valid with steroid:  ```python test.py log_dir my_run model_path model.py augmen
 Create a new folder ```data``` under ```TOUGHM1``` and copy the surface folder corresponding to TOUGH-M1 and prospeccts into it.
 
 Within TOUGHM1: ```python train.py log_dir my_run_0 model_path model.py augmentation 5 batch_size 128 learning_rate 0.0005 num_workers 8 test_every_n 1 loss_margin 1.25 fold_n 0```
+(fold_n can be changed from 0 to 4)
 
-Valid with prospeccts:  ```python val_ProSPECCTs.py log_dir my_run_0 model_path model.py augmentation 5 batch_size 128 num_workers 8 db_name P1```
+Valid with prospeccts:  ```python val_ProSPECCTs.py log_dir my_run_0 model_path model.py augmentation 5 batch_size 128 num_workers 8 db_name P1``` 
+(db_name can be changed to other subset of ProSPECCTs)
