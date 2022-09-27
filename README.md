@@ -31,3 +31,6 @@ Within TOUGHM1: ```python train.py log_dir my_run_0 model_path model.py augmenta
 
 Valid with prospeccts:  ```python val_ProSPECCTs.py log_dir my_run_0 model_path model.py augmentation 5 batch_size 128 num_workers 8 db_name P1``` 
 (db_name can be changed to other subset of ProSPECCTs)
+
+## Contact
+Please contact j.gu.20@ucl.ac.uk for help or submit an issue. This is a joint work with Edith Chan and Oliver Scott.
